@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Knockout List</title>
+  </head>
+  <body>
+    <div id="todoapp">
+      <div class="title">
+        <h1>Knockout List</h1>
+      </div>
+      <form id="create-todo" data-bind="submit:addItem">
+        <input id="new-todo" placeholder="What needs to be done?" type="text" data-bind="value:currentText" />
+        <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
+      </form>
+    </div>
+    <script src="script/knockout-1.2.1.js"></script>
+    <script src="script/app.js"></script>
+  </body>
+</html>
