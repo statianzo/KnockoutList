@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>Knockout List</title>
+    <link type="text/css" rel="stylesheet" href="todos.css" />
   </head>
   <body>
     <div id="todoapp">
@@ -11,8 +12,47 @@
         <input id="new-todo" placeholder="What needs to be done?" type="text" data-bind="value:currentText" />
         <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
       </form>
+      <ul id="todo-list" data-bind="template:{name:render, foreach:items}"></ul>
+      <div id="todo-stats" data-bind="template:'stats'">
+        
+      </div>
     </div>
-    <script src="script/knockout-1.2.1.js"></script>
+
+    <script type="text/x-jquery-tmpl" id="viewItem">
+      <li class="todo ${complete() ? 'complete' : ''}">
+        <input class="check" type="checkbox" data-bind="checked:complete" />
+        <span class="todo-text" data-bind="text:value, event:{dblclick:edit}" />
+        <span class="todo-destroy" data-bind="click:destroy">X</span>
+      </li>
+    </script>
+    <script type="text/x-jquery-tmpl" id="editItem">
+      <li class="todo editing">
+        <form data-bind="submit:save">
+            <input class="todo-input" type="text" data-bind="value:value"/>
+        </form>
+      </li>
+    </script>
+    <script type="text/x-jquery-tmpl" id="stats">
+      {{if items().length}}
+      <span class="todo-count">
+        <span class="number">${remaining().length}</span>
+        <span class="word">${pluralize(remaining().length)}</span> left.
+      </span>
+      {{/if}}
+
+      {{if completed().length}}
+      <span class="todo-clear">
+        <a href="#" data-bind="click:clearCompleted">
+          Clear <span class="number-done">${completed().length}</span>
+          completed <span class="word-done">${pluralize(completed().length)}</span>
+        </a>
+      </span>
+      {{/if}}
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/1.2.1/knockout-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js"></script>
     <script src="script/app.js"></script>
   </body>
 </html>
