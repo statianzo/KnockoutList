@@ -13,9 +13,7 @@
         <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
       </form>
       <ul id="todo-list" data-bind="template:{name:render, foreach:items}"></ul>
-      <div id="todo-stats" data-bind="template:'stats'">
-        
-      </div>
+      <div id="todo-stats" data-bind="template:'stats'"></div>
     </div>
 
     <script type="text/x-jquery-tmpl" id="viewItem">
@@ -53,6 +51,7 @@
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/1.2.1/knockout-min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js"></script>
+    <script src="script/store.js"></script>
     <script src="script/app.js"></script>
   </body>
 </html>

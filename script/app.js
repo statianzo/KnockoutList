@@ -1,13 +1,23 @@
 (function(){
+  function persistItems() {
+    Storage.persist(todosModel.items(), function(item){
+      return item.toJS();
+    });
+  }
 
-  function TodoItem(list, value, index) {
-    this.list = list;
+  function TodoItem(value, remove, order, complete) {
+    this.remove = remove;
     this.value = ko.observable(value);
-    this.complete = ko.observable(false);
+    this.complete = ko.observable(!!complete);
     this.mode = ko.observable("view");
+    this.order = order;
+
+    this.complete.subscribe(persistItems);
+    this.value.subscribe(persistItems);
   }
   TodoItem.prototype.destroy = function() {
-    this.list.removeItem(this);
+    console.dir(this.remove);
+    this.remove(this);
   };
 
   TodoItem.prototype.edit = function() {
@@ -18,16 +28,18 @@
     this.mode("view");
   };
 
+  TodoItem.prototype.toJS = function() {
+    return ko.toJS(this);
+  };
+
   var todosModel = {
-    items: ko.observableArray(),
-    currentText: ko.observable(""),
-    addItem: function() {
-      var item = new TodoItem(this, this.currentText());
-      this.items.push(item);
-      this.currentText("");
-    },
     removeItem: function(item) {
       this.items.remove(item);
+    },
+    addItem: function() {
+      var item = new TodoItem(this.currentText(), this.removeItem, this.nextIndex());
+      this.items.push(item);
+      this.currentText("");
     },
     render: function(item) {
       return item.mode() + "Item";
@@ -43,8 +55,20 @@
     },
     pluralize: function(length) {
       return length == 1 ? 'item' : 'items';
-    }
+    },
+    nextIndex: function() {
+      return this.items().length;
+    },
+    items: ko.observableArray(),
+    currentText: ko.observable("")
   };
+
+  var loaded = Storage.load(function(i){
+                 return new TodoItem(i.value, todosModel.removeItem, i.order, i.complete);
+               });
+  _.each(loaded,todosModel.items.push);
+
+  todosModel.items.subscribe(persistItems);
 
   ko.applyBindings(todosModel);
 })();
