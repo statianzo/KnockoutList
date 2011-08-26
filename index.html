@@ -8,7 +8,7 @@
       <div class="title">
         <h1>Knockout List</h1>
       </div>
-      <form id="create-todo" data-bind="submit:addItem">
+      <form id="create-todo" data-bind="submit:createItem">
         <input id="new-todo" placeholder="What needs to be done?" type="text" data-bind="value:currentText" />
         <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
       </form>
@@ -16,11 +16,17 @@
       <div id="todo-stats" data-bind="template:'stats'"></div>
     </div>
 
+    <div id="credits">
+      <a href="http://documentcloud.github.com/backbone/examples/todos/index.html">Todos</a> Originally Created by
+        <br />
+        <a href="http://jgn.me/">J&eacute;r&ocirc;me Gravel-Niquet</a>
+    </div>
+
     <script type="text/x-jquery-tmpl" id="viewItem">
       <li class="todo ${complete() ? 'complete' : ''}">
         <input class="check" type="checkbox" data-bind="checked:complete" />
         <span class="todo-text" data-bind="text:value, event:{dblclick:edit}" />
-        <span class="todo-destroy" data-bind="click:destroy">X</span>
+        <span class="todo-destroy" data-bind="click:destroy"></span>
       </li>
     </script>
     <script type="text/x-jquery-tmpl" id="editItem">
@@ -47,10 +53,10 @@
       </span>
       {{/if}}
     </script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/1.2.1/knockout-min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js"></script>
+    <script src="script/jquery-1.6.2.min.js"></script>
+    <script src="script/jquery.tmpl.min.js"></script>
+    <script src="script/knockout-1.2.1.js"></script>
+    <script src="script/underscore-min.js"></script>
     <script src="script/store.js"></script>
     <script src="script/app.js"></script>
   </body>

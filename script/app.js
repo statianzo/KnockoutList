@@ -1,9 +1,4 @@
 (function(){
-  function persistItems() {
-    Storage.persist(todosModel.items(), function(item){
-      return item.toJS();
-    });
-  }
 
   function TodoItem(value, remove, order, complete) {
     this.remove = remove;
@@ -11,12 +6,8 @@
     this.complete = ko.observable(!!complete);
     this.mode = ko.observable("view");
     this.order = order;
-
-    this.complete.subscribe(persistItems);
-    this.value.subscribe(persistItems);
   }
   TodoItem.prototype.destroy = function() {
-    console.dir(this.remove);
     this.remove(this);
   };
 
@@ -32,43 +23,60 @@
     return ko.toJS(this);
   };
 
+  TodoItem.prototype.subscribe = function(handler) {
+    this.complete.subscribe(handler);
+    this.value.subscribe(handler);
+  };
+
+
   var todosModel = {
+    items: ko.observableArray(),
+
+    currentText: ko.observable(""),
+
     removeItem: function(item) {
-      this.items.remove(item);
+      todosModel.items.remove(item);
     },
-    addItem: function() {
-      var item = new TodoItem(this.currentText(), this.removeItem, this.nextIndex());
-      this.items.push(item);
-      this.currentText("");
+    createItem: function() {
+      var item = new TodoItem(todosModel.currentText(), todosModel.removeItem, todosModel.nextIndex());
+      todosModel.addItem(item);
+      todosModel.currentText("");
+    },
+    addItem: function(item) {
+      item.subscribe(todosModel.persistItems);
+      todosModel.items.push(item);
     },
     render: function(item) {
       return item.mode() + "Item";
     },
     remaining: function() {
-      return _.select(this.items(), function(i){return !i.complete()});
+      return _.select(todosModel.items(), function(i){return !i.complete();});
     },
     completed: function() {
-      return _.select(this.items(), function(i){return i.complete()});
+      return _.select(todosModel.items(), function(i){return i.complete();});
     },
     clearCompleted: function() {
-      _.each(this.completed(), function(i){i.destroy()});
+      _.each(todosModel.completed(), function(i){i.destroy();});
     },
     pluralize: function(length) {
-      return length == 1 ? 'item' : 'items';
+      return length === 1 ? 'item' : 'items';
     },
     nextIndex: function() {
-      return this.items().length;
+      return todosModel.items().length;
     },
-    items: ko.observableArray(),
-    currentText: ko.observable("")
+    persistItems: function() {
+      Storage.persist(todosModel.items(), function(item){
+        return item.toJS();
+      });
+    }
   };
 
-  var loaded = Storage.load(function(i){
-                 return new TodoItem(i.value, todosModel.removeItem, i.order, i.complete);
-               });
-  _.each(loaded,todosModel.items.push);
+  var loaded = Storage.load(function(i) {
+    return new TodoItem(i.value, todosModel.removeItem, i.order, i.complete);
+  });
+  _.each(loaded, todosModel.addItem);
 
-  todosModel.items.subscribe(persistItems);
+  todosModel.items.subscribe(todosModel.persistItems);
 
   ko.applyBindings(todosModel);
-})();
+}());
